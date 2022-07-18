@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "npm-watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build --prefix ../client && nodemon src/index.js"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js,jsx"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koush/wrtc": "^0.5.3",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.18",
+    "npm-watch": "^0.11.0",
+    "socket.io": "^4.5.1"
+  }
+}
