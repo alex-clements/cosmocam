@@ -3,3 +3,5 @@
 /client/build
 /server/node_modules
 /server/src/certificates
+/server/dist
+/.vscode
