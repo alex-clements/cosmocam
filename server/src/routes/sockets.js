@@ -1,30 +1,11 @@
 "use strict";
-const Queue = require("../scripts/queue");
+import { Queue } from "../scripts/queue.js";
+import { Server } from "socket.io";
 
-module.exports = function (server, app) {
-  const io = require("socket.io")(server);
+export default function (server, app) {
+  const io = new Server(server);
   let broadcastQueue = new Queue();
   let viewerQueue = new Queue();
-
-  const clearStreamsAndPeers = async (socket) => {
-    const streamManager = app.get("streamManager");
-    let userStreams = streamManager.getAllUserStreams();
-    for (const [key, value] of userStreams) {
-      let peers = value.get("peers");
-      let streams = value.get("streams");
-      for (const [test_socket, stream] of streams) {
-        if (test_socket === socket) {
-          streamManager.removeUserStream(key, test_socket);
-        }
-      }
-
-      for (const [test_socket, peer] of peers) {
-        if (test_socket === socket) {
-          streamManager.removeUserPeer(key, test_socket);
-        }
-      }
-    }
-  };
 
   io.use((socket, next) => {
     next();
@@ -32,10 +13,13 @@ module.exports = function (server, app) {
 
   io.on("connection", (socket) => {
     console.log("socket connected: ", socket.id);
+    let streamManager = app.get("streamManager");
+    streamManager.addSocketIO(socket.id, socket);
 
     socket.on("disconnect", (reason) => {
       console.log("socket disconnected: ", socket.id);
-      clearStreamsAndPeers(socket.id);
+      let streamManager = app.get("streamManager");
+      streamManager.removeSocket(socket.id);
       io.emit("reestablish_connection", "socket disconnected");
     });
 
@@ -45,11 +29,13 @@ module.exports = function (server, app) {
       const ice = data.ice;
       let streamManager = app.get("streamManager");
 
-      if (streamManager.hasUserPeer(username, socket_id)) {
-        streamManager.getPeer(username, socket_id).addIceCandidate(data.ice);
+      if (streamManager.hasStreamingPeer(username, socket_id)) {
+        streamManager
+          .getStreamingPeer(username, socket_id)
+          .addIceCandidate(data.ice);
         while (broadcastQueue.len > 0) {
           streamManager
-            .getPeer(username, socket_id)
+            .getStreamingPeer(username, socket_id)
             .addIceCandidate(broadcastQueue.pop());
         }
       } else {
@@ -70,9 +56,8 @@ module.exports = function (server, app) {
 
     socket.on("disconnect_peer", (username) => {
       const streamManager = app.get("streamManager");
-      streamManager.removeUserStream(username.toLowerCase(), socket.id);
-      streamManager.removeUserPeer(username.toLowerCase(), socket.id);
+      streamManager.clearStreamingSocket(username.toLowerCase(), socket.id);
       io.emit("reestablish_connection", "socket disconnected");
     });
   });
-};
+}

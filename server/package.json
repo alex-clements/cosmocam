@@ -2,19 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index",
+  "type": "module",
   "scripts": {
-    "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build --prefix ../client && nodemon src/index.js"
-  },
-  "watch": {
-    "build": {
-      "patterns": [
-        "src"
-      ],
-      "extensions": "js,jsx"
-    }
+    "start": "npx tsc && npm run build --prefix ../client && node dist/index.js",
+    "server": "npx tsc && node dist/index.js",
+    "dev": "nodemon -e ts --ignore dist/ --exec \"npm run server\""
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +19,11 @@
     "express": "^4.18.1",
     "nodemon": "^2.0.18",
     "npm-watch": "^0.11.0",
-    "socket.io": "^4.5.1"
+    "socket.io": "^4.5.1",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "typescript": "^4.7.4"
   }
 }

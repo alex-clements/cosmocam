@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const data = require("../certificates/users.json");
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
+import data from "../certificates/users.js";
 
 var rand = function () {
   return Math.random().toString(36).substr(2);
@@ -38,4 +38,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

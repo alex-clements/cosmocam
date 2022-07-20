@@ -1,5 +1,5 @@
 export class Peer {
-  peer: RTCPeerConnection;
+  peer: RTCPeerConnection | null;
 
   constructor(peer: RTCPeerConnection) {
     this.peer = peer;
@@ -10,7 +10,7 @@ export class Peer {
    * @param track a MediaStreamTrack
    */
   addTrack(track: MediaStreamTrack) {
-    this.peer.addTrack(track);
+    this.peer?.addTrack(track);
   }
 
   /**
@@ -20,5 +20,3 @@ export class Peer {
     this.peer = null;
   }
 }
-
-module.exports = Peer;

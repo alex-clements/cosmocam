@@ -1,21 +1,28 @@
-import { AbstractSocket } from "./AbstractSocket";
-import { Stream } from "./Stream";
-import { User } from "./User";
+import { AbstractSocket } from "./AbstractSocket.js";
+import { Stream } from "./Stream.js";
+import { User } from "./User.js";
 
 export class StreamingSocket extends AbstractSocket {
-  stream: Stream;
+  stream: Stream | null;
   stream_set: Boolean;
 
   constructor(socket: String, user: User) {
     super(socket, user);
     this.user.addStreamingSocket(this);
     this.stream_set = false;
+    this.stream = null;
   }
 
   // sets the contained stream
   setStream(stream: Stream) {
     this.stream = stream;
+    this.stream.addStreamingSocket(this.id);
     this.stream_set = true;
+  }
+
+  clearStreamAndPeer() {
+    this.removeStream();
+    this.removePeer();
   }
 
   /**
@@ -26,15 +33,24 @@ export class StreamingSocket extends AbstractSocket {
     this.stream_set = false;
   }
 
+  /**
+   * Removes the peer from the StreamingSocket
+   */
+  removePeer() {
+    this.peer = null;
+    this.peer_set = false;
+  }
+
   // given a MediaStream, determines if the contained stream is the same one
   streamEquals(stream: MediaStream) {
-    return this.stream.equals(stream);
+    return this.stream?.equals(stream);
   }
 
   // given an RTCPeerConnection, will add all the tracks of the contained stream
   // if it exists
-  addStreamTracksToPeer(peer: RTCPeerConnection) {
-    if (this.stream.stream) {
+  addStreamTracksToPeer(peer: RTCPeerConnection | null) {
+    if (!peer) return;
+    if (this.stream?.stream) {
       this.stream.stream.getTracks().forEach((track) => {
         peer.addTrack(track);
       });
@@ -44,7 +60,7 @@ export class StreamingSocket extends AbstractSocket {
   // cleans up the socket by closing the peer and removing the contained stream
   close() {
     this.stream = null;
-    this.peer.close();
+    this.peer?.close();
     this.user.removeStreamingSocket(this.id);
   }
 }

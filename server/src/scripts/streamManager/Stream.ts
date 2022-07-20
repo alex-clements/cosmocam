@@ -1,28 +1,33 @@
-import { Peer } from "./Peer";
+import { Peer } from "./Peer.js";
+import { Queue } from "../queue.js";
 
 export class Stream {
   stream: MediaStream;
   streaming_sockets: String[];
   viewing_sockets: String[];
+  ice_candidate_queue: Queue;
 
   constructor(stream: MediaStream) {
     this.stream = stream;
     this.streaming_sockets = [];
     this.viewing_sockets = [];
+    this.ice_candidate_queue = new Queue();
+    console.log("Stream: Stream created.");
   }
 
   addStreamingSocket(socket: String) {
     this.streaming_sockets.push(socket);
+    console.log("Stream: StreamingSocket added.");
   }
 
   removeStreamingSocket(socket: String) {
-    let to_remove: number;
+    let to_remove: number = -1;
     this.streaming_sockets.forEach((streaming_socket, index) => {
       if (streaming_socket === socket) {
         to_remove = index;
       }
     });
-    if (to_remove) {
+    if (to_remove >= 0) {
       this.streaming_sockets.splice(to_remove, 1);
     }
   }
@@ -32,13 +37,13 @@ export class Stream {
   }
 
   removeViewingSocket(socket: String) {
-    let to_remove: number;
+    let to_remove: number = -1;
     this.viewing_sockets.forEach((streaming_socket, index) => {
       if (streaming_socket === socket) {
         to_remove = index;
       }
     });
-    if (to_remove) {
+    if (to_remove >= 0) {
       this.viewing_sockets.splice(to_remove, 1);
     }
   }
@@ -51,11 +56,10 @@ export class Stream {
     this.stream.getTracks().forEach((track) => {
       peer.addTrack(track);
     });
+    console.log("Stream: Tracks added to Peer");
   }
 
   equals(stream: MediaStream) {
     return stream === this.stream;
   }
 }
-
-module.exports = Stream;

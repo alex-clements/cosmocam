@@ -1,39 +1,42 @@
 class Node {
-  constructor(val) {
+  val: any;
+  next: any;
+  constructor(val: any) {
     this.val = val;
     this.next = null;
   }
 }
 
-class Queue {
+export class Queue {
+  head: Node | null;
+  tail: Node | null;
+  len: number;
   constructor() {
     this.head = null;
     this.tail = null;
     this.len = 0;
   }
 
-  push(val) {
+  push(val: any) {
     let new_node = new Node(val);
     if (!this.head) {
       this.head = new_node;
       this.tail = new_node;
     } else {
-      this.tail.next = new_node;
+      if (this.tail) this.tail.next = new_node;
       this.tail = new_node;
     }
     this.len++;
   }
 
-  pop(val) {
+  pop(val: any) {
     if (!this.len) return null;
     let return_node = this.head;
-    this.head = this.head.next;
+    if (this.head) this.head = this.head.next;
     this.len--;
     if (this.len === 0) {
       this.tail = null;
     }
-    return return_node.val;
+    return return_node?.val;
   }
 }
-
-module.exports = Queue;

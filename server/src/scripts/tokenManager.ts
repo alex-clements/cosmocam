@@ -1,11 +1,10 @@
-const e = require("express");
-
 class DataStore {
+  userTokens: any;
   constructor() {
     this.userTokens = {};
   }
 
-  setToken(user, token) {
+  setToken(user: any, token: any) {
     if (this.userTokens[user]) {
       console.log("adding token to user");
       this.userTokens[user].add(token);
@@ -16,7 +15,7 @@ class DataStore {
     }
   }
 
-  getTokens(user) {
+  getTokens(user: any) {
     if (!this.userTokens[user]) {
       return null;
     } else {
@@ -24,11 +23,11 @@ class DataStore {
     }
   }
 
-  removeToken(user, token) {
+  removeToken(user: any, token: any) {
     this.userTokens[user].delete(token);
   }
 }
 
 let tokenManager = new DataStore();
 
-module.exports = tokenManager;
+export default tokenManager;

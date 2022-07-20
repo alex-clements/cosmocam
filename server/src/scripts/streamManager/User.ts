@@ -1,6 +1,6 @@
-import { StreamingSocket } from "./StreamingSocket";
-import { ViewingSocket } from "./ViewingSocket";
-import { Peer } from "./Peer";
+import { StreamingSocket } from "./StreamingSocket.js";
+import { ViewingSocket } from "./ViewingSocket.js";
+import { Peer } from "./Peer.js";
 
 export class User {
   username: String;
@@ -20,13 +20,13 @@ export class User {
 
   // removes a streaming socket from the user
   removeStreamingSocket(socket: String): void {
-    let to_remove: number;
+    let to_remove: number = -1;
     this.streaming_sockets.forEach((streaming_socket, index) => {
       if (streaming_socket.id === socket) {
         to_remove = index;
       }
     });
-    if (to_remove) {
+    if (to_remove >= 0) {
       this.streaming_sockets.splice(to_remove, 1);
     }
   }
@@ -34,8 +34,8 @@ export class User {
   /**
    * Given a socket_id, returns the StreamingSocket associated with it.
    */
-  getStreamingSocket(socket_id: String): StreamingSocket {
-    let return_val: number;
+  getStreamingSocket(socket_id: String): StreamingSocket | null {
+    let return_val: number = -1;
 
     this.streaming_sockets.forEach((test_socket, index) => {
       if (test_socket.id === socket_id) {
@@ -43,7 +43,11 @@ export class User {
       }
     });
 
-    return this.streaming_sockets[return_val];
+    if (return_val >= 0) {
+      return this.streaming_sockets[return_val];
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -59,13 +63,14 @@ export class User {
    * @param socket_id
    */
   removeViewingSocket(socket_id: String): void {
-    let to_remove: number;
+    let to_remove: number = -1;
+
     this.viewing_sockets.forEach((streaming_socket, index) => {
       if (streaming_socket.id === socket_id) {
         to_remove = index;
       }
     });
-    if (to_remove) {
+    if (to_remove >= 0) {
       this.viewing_sockets.splice(to_remove, 1);
     }
   }
@@ -75,8 +80,8 @@ export class User {
    * @param socket_id
    * @returns ViewingSocket associated with the socket_id
    */
-  getViewingSocket(socket_id: String): ViewingSocket {
-    let return_index: number;
+  getViewingSocket(socket_id: String): ViewingSocket | null {
+    let return_index: number = -1;
 
     this.viewing_sockets.forEach((test_socket, index) => {
       if (test_socket.id === socket_id) {
@@ -84,7 +89,11 @@ export class User {
       }
     });
 
-    return this.viewing_sockets[return_index];
+    if (return_index >= 0) {
+      return this.viewing_sockets[return_index];
+    } else {
+      return null;
+    }
   }
 
   /**

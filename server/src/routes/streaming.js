@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const webrtc = require("@koush/wrtc");
+import webrtc from "@koush/wrtc";
 
 router.post("/broadcast", async (req, res) => {
   console.log("/broadcast");
@@ -23,7 +23,7 @@ router.post("/broadcast", async (req, res) => {
   const payload = {
     sdp: broadcastPeer.localDescription,
   };
-  req.app.get("streamManager").addUserPeer(user, socket_id, broadcastPeer);
+  req.app.get("streamManager").addStreamingPeer(user, socket_id, broadcastPeer);
   res.json(payload);
 });
 
@@ -31,6 +31,7 @@ router.post("/consumer", async (req, res) => {
   console.log("/consumer");
   const username = req.body.user.toLowerCase();
   const streamManager = req.app.get("streamManager");
+  const socket_id = req.body.socket_id;
   const peer = new webrtc.RTCPeerConnection({
     iceServers: [
       {
@@ -44,27 +45,28 @@ router.post("/consumer", async (req, res) => {
   const desc = new webrtc.RTCSessionDescription(req.body.sdp);
   await peer.setRemoteDescription(desc);
 
-  const streams = streamManager.getUserStreams(username);
+  streamManager.addViewingPeer(username, socket_id, peer);
 
-  streams.forEach((stream, index) => {
-    stream.getTracks().forEach((track) => {
-      peer.addTrack(track);
-    });
-  });
+  // const streams = streamManager.getUserStreams(username);
+
+  // streams.forEach((stream, index) => {
+  //   stream.getTracks().forEach((track) => {
+  //     peer.addTrack(track);
+  //   });
+  // });
 
   const answer = await peer.createAnswer();
   await peer.setLocalDescription(answer);
   const payload = {
     sdp: peer.localDescription,
   };
-
   res.json(payload);
 });
 
 function handleTrackEvent(e, peer, streamManager, user, socket_id) {
   if (!streamManager.hasUserStream(user, e.streams[0])) {
-    streamManager.addUserStream(user, socket_id, e.streams[0]);
+    streamManager.addStream(user, socket_id, e.streams[0]);
   }
 }
 
-module.exports = router;
+export default router;

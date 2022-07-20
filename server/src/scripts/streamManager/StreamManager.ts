@@ -1,16 +1,31 @@
-import { User } from "./User";
-import { AbstractSocket } from "./AbstractSocket";
-import { StreamingSocket } from "./StreamingSocket";
-import { ViewingSocket } from "./ViewingSocket";
-import { Peer } from "./Peer";
-import { Stream } from "./Stream";
-class StreamManager {
+import { User } from "./User.js";
+import { AbstractSocket } from "./AbstractSocket.js";
+import { StreamingSocket } from "./StreamingSocket.js";
+import { ViewingSocket } from "./ViewingSocket.js";
+import { Peer } from "./Peer.js";
+import { Stream } from "./Stream.js";
+import { Socket } from "socket.io";
+import { reduceEachTrailingCommentRange } from "typescript";
+
+export default class StreamManager {
   users: Map<String, User>;
   sockets: Set<AbstractSocket>;
+  socket_io_map: Map<String, Socket>;
 
   constructor() {
     this.users = new Map();
     this.sockets = new Set();
+    this.socket_io_map = new Map<String, Socket>();
+  }
+
+  /**
+   *
+   * @param socket_id An ID of a socket
+   * @param socket A socket.io socket
+   */
+  addSocketIO(socket_id: String, socket: Socket) {
+    if (this.socket_io_map.has(socket_id)) return;
+    this.socket_io_map.set(socket_id, socket);
   }
 
   // removes a socket
@@ -34,28 +49,37 @@ class StreamManager {
   }
 
   // adds a new StreamingSocket to a User
-  addStreamingSocket(username: String, socket: String) {
+  addStreamingSocket(username: String, socket: String): StreamingSocket | null {
     let user = this.users.get(username);
-    if (!user) return;
+    if (!user) return null;
 
-    let new_socket: AbstractSocket = new StreamingSocket(socket, user);
+    let new_socket: StreamingSocket = new StreamingSocket(socket, user);
     this.sockets.add(new_socket);
+
+    return new_socket;
   }
 
   // adds a new ViewingSocket to a User
-  addViewingSocket(username: String, socket: String) {
+  addViewingSocket(username: String, socket: String): ViewingSocket | null {
     let user = this.users.get(username);
-    if (!user) return;
-    let new_socket: AbstractSocket = new ViewingSocket(socket, user);
+    if (!user) return null;
+    let new_socket: ViewingSocket = new ViewingSocket(socket, user);
     this.sockets.add(new_socket);
+    return new_socket;
   }
 
   // adds a Peer to a ViewingSocket
   addViewingPeer(username: String, socket_id: String, peer: RTCPeerConnection) {
     let user = this.users.get(username);
-    let socket: ViewingSocket = user.getViewingSocket(socket_id);
+
+    let socket: ViewingSocket | null | undefined =
+      user?.getViewingSocket(socket_id);
+
+    if (!socket) {
+      socket = this.addViewingSocket(username, socket_id);
+    }
     let new_peer: Peer = new Peer(peer);
-    socket.setPeer(new_peer);
+    socket?.setPeer(new_peer);
   }
 
   // adds a Peer to a StreamingSocket
@@ -63,43 +87,46 @@ class StreamManager {
     username: String,
     socket_id: String,
     peer: RTCPeerConnection
-  ) {
+  ): void {
     let user = this.users.get(username);
-    let socket: StreamingSocket = user.getStreamingSocket(socket_id);
+    let socket: StreamingSocket | null | undefined =
+      user?.getStreamingSocket(socket_id);
     let new_peer: Peer = new Peer(peer);
-    socket.setPeer(new_peer);
+    socket?.setPeer(new_peer);
   }
 
   // determines if a given user has a viewing peer
-  hasViewingPeer(username: String, socket_id: String) {
+  hasViewingPeer(username: String, socket_id: String): Boolean {
     let user = this.users.get(username);
     if (!user) return false;
-    let viewing_socket: ViewingSocket = user.getViewingSocket(socket_id);
-    return viewing_socket.peer != null;
+    let viewing_socket: ViewingSocket | null = user.getViewingSocket(socket_id);
+    return viewing_socket?.peer != null;
   }
 
   // determines if a given user has a viewing peer
-  hasStreamingPeer(username: String, socket_id: String) {
+  hasStreamingPeer(username: String, socket_id: String): Boolean {
     let user = this.users.get(username);
     if (!user) return false;
-    let streaming_socket: StreamingSocket = user.getStreamingSocket(socket_id);
-    return streaming_socket.peer != null;
+    let streaming_socket: StreamingSocket | null =
+      user.getStreamingSocket(socket_id);
+    return streaming_socket?.peer != null;
   }
 
   // returns the peer of a ViewingSocket
   getViewingPeer(username: String, socket_id: String) {
     let user = this.users.get(username);
     if (!user) return;
-    let viewing_socket: ViewingSocket = user.getViewingSocket(socket_id);
-    return viewing_socket.peer.peer;
+    let viewing_socket: ViewingSocket | null = user.getViewingSocket(socket_id);
+    return viewing_socket?.peer?.peer;
   }
 
   // returns the peer of a StreamingSocket
   getStreamingPeer(username: String, socket_id: String) {
     let user = this.users.get(username);
     if (!user) return;
-    let streaming_socket: StreamingSocket = user.getStreamingSocket(socket_id);
-    return streaming_socket.peer.peer;
+    let streaming_socket: StreamingSocket | null =
+      user.getStreamingSocket(socket_id);
+    return streaming_socket?.peer?.peer;
   }
 
   // closes down a ViewingSocket
@@ -123,20 +150,28 @@ class StreamManager {
     let user = this.users.get(username);
     if (!user) return;
 
-    let streaming_socket: StreamingSocket = user.getStreamingSocket(socket_id);
-    if (!streaming_socket) return;
+    let streaming_socket: StreamingSocket | null =
+      user.getStreamingSocket(socket_id);
+    if (!streaming_socket) {
+      streaming_socket = this.addStreamingSocket(username, socket_id);
+    }
 
     let new_stream: Stream = new Stream(stream);
-    streaming_socket.setStream(new_stream);
+    streaming_socket?.setStream(new_stream);
   }
 
   // determines if a user has a stream
-  hasUserStream(username: String, stream: MediaStream) {
+  hasUserStream(username: String, stream: MediaStream): Boolean | null {
     let user = this.users.get(username);
+    if (!user) return null;
+
     return user.hasStream(stream);
   }
+
+  clearStreamingSocket(username: String, socket_id: String) {
+    let user = this.users.get(username);
+    if (!user) return null;
+    let socket = user.getStreamingSocket(socket_id);
+    socket?.clearStreamAndPeer();
+  }
 }
-
-let streamManager: StreamManager = new StreamManager();
-
-module.exports = streamManager;
