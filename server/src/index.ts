@@ -62,4 +62,3 @@ app.get("*", (req: Request, res: Response) => {
 
 // Start the server
 httpsServer.listen(3001, () => console.log("Server started on port 3001"));
-console.log("test");

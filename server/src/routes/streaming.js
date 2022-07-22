@@ -47,14 +47,6 @@ router.post("/consumer", async (req, res) => {
 
   streamManager.addViewingPeer(username, socket_id, peer);
 
-  // const streams = streamManager.getUserStreams(username);
-
-  // streams.forEach((stream, index) => {
-  //   stream.getTracks().forEach((track) => {
-  //     peer.addTrack(track);
-  //   });
-  // });
-
   const answer = await peer.createAnswer();
   await peer.setLocalDescription(answer);
   const payload = {
