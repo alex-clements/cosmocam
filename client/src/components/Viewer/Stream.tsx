@@ -11,11 +11,9 @@ const Stream = ({ source }: StreamProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    console.log("Stream Component Mounted");
     let new_stream = new MediaStream();
     new_stream.addTrack(source);
     if (videoRef.current) {
-      console.log("stream attached to video");
       videoRef.current.srcObject = new_stream;
       videoRef.current.play();
     }

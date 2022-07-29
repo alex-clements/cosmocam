@@ -29,9 +29,9 @@ var httpsServer = https.createServer(
 );
 
 // Set up random crap
-socket(httpsServer, app);
-app.set("tokenManager", tokenManager);
 app.set("streamManager", new StreamManager());
+app.set("tokenManager", tokenManager);
+socket(httpsServer, app);
 app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "../../client", "build")));
 app.use(bodyParser.json());
@@ -44,7 +44,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   let string_date: String = date.toLocaleString("en-US", {
     timeZone: "America/Los_Angeles",
   });
-  console.log(string_date, "PST: Request Incoming");
+  console.log("\n", string_date, "PST: Request Incoming");
   next();
 });
 

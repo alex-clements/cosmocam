@@ -20,7 +20,6 @@ const authenticate = async (req) => {
       return true;
     }
   }
-
   return false;
 };
 

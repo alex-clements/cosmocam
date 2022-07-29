@@ -6,10 +6,8 @@ class DataStore {
 
   setToken(user: any, token: any) {
     if (this.userTokens[user]) {
-      console.log("adding token to user");
       this.userTokens[user].add(token);
     } else {
-      console.log("creating new user and adding token");
       this.userTokens[user] = new Set();
       this.userTokens[user].add(token);
     }

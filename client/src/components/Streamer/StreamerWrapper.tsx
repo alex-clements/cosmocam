@@ -5,6 +5,8 @@ import Headerbar from "../Headerbar/Headerbar";
 import ApplicationBar from "../Utility/ApplicationBar";
 import { io, Socket } from "socket.io-client";
 import DefaultEventsMap from "socket.io-client";
+import { useAppSelector } from "../../app/hooks";
+import { selectUsername } from "../TokenManager/tokenSlice";
 
 interface StreamerProps {
   token: string;
@@ -15,12 +17,18 @@ interface StreamerProps {
 const StreamerWrapper = ({ token, loaded, loggedIn }: StreamerProps) => {
   const [socket, setSocket] =
     useState<Socket<typeof DefaultEventsMap, typeof DefaultEventsMap>>();
+  const username = useAppSelector(selectUsername);
 
   useEffect(() => {
     const newSocket = io(`/`, {
       transports: ["websocket"],
     });
     setSocket(newSocket);
+    newSocket.emit("socket_connection", {
+      user: username,
+      socket_id: newSocket.id,
+      type: "stream",
+    });
 
     return () => {
       newSocket.close();

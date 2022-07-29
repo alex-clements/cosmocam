@@ -2,6 +2,7 @@ import React, { useState, Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import Headerbar from "../Headerbar/Headerbar";
 import Dashboard from "./Dashboard";
+import ApplicationBar from "../Utility/ApplicationBar";
 
 interface DashboardWrapperProps {
   token: string;
@@ -17,6 +18,7 @@ const DashboardWrapper = ({
   return (
     <Fragment>
       <Headerbar loggedIn={loggedIn} />
+      <ApplicationBar backButtonEnabled={false} title={"Dashboard"} />
       <Dashboard />
     </Fragment>
   );

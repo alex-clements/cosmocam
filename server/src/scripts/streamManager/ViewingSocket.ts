@@ -1,31 +1,28 @@
+import { Socket } from "socket.io";
 import { AbstractSocket } from "./AbstractSocket.js";
 import { Peer } from "./Peer.js";
 import { User } from "./User.js";
 
 export class ViewingSocket extends AbstractSocket {
-  constructor(socket: String, user: User) {
-    super(socket, user);
+  constructor(socket_id: String, user: User, socket: Socket) {
+    super(socket_id, user, socket, "viewing");
     this.user.addViewingSocket(this);
-    console.log("ViewingSocket created");
   }
 
   /**
    * Sets the peer of this ViewingSocket. Adds all streams from existing StreamingSockets to the Peer.
    * @param peer a Peer connection
    */
-  setPeer(peer: Peer) {
-    this.peer = peer;
-    this.user.addStreamsToPeer(peer);
+  setPeer(peer: RTCPeerConnection) {
+    this.peer?.setPeer(peer);
+    this.user.addStreamsToPeer(this.peer);
   }
 
   /**
    * Eliminates the peer connection and removes the ViewingSocket from the associated user.
    */
   close() {
-    if (this.peer) {
-      this.peer.close();
-    }
-    this.peer = null;
+    this.peer?.close();
     this.user.removeViewingSocket(this.id);
   }
 }

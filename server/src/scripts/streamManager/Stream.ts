@@ -1,5 +1,5 @@
 import { Peer } from "./Peer.js";
-import { Queue } from "../queue.js";
+import { Queue } from "../Queue.js";
 
 export class Stream {
   stream: MediaStream;
@@ -12,12 +12,10 @@ export class Stream {
     this.streaming_sockets = [];
     this.viewing_sockets = [];
     this.ice_candidate_queue = new Queue();
-    console.log("Stream: Stream created.");
   }
 
   addStreamingSocket(socket: String) {
     this.streaming_sockets.push(socket);
-    console.log("Stream: StreamingSocket added.");
   }
 
   removeStreamingSocket(socket: String) {
@@ -56,7 +54,6 @@ export class Stream {
     this.stream.getTracks().forEach((track) => {
       peer.addTrack(track);
     });
-    console.log("Stream: Tracks added to Peer");
   }
 
   equals(stream: MediaStream) {

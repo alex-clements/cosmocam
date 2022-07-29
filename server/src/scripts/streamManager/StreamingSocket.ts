@@ -1,3 +1,4 @@
+import { Socket } from "socket.io";
 import { AbstractSocket } from "./AbstractSocket.js";
 import { Stream } from "./Stream.js";
 import { User } from "./User.js";
@@ -6,8 +7,8 @@ export class StreamingSocket extends AbstractSocket {
   stream: Stream | null;
   stream_set: Boolean;
 
-  constructor(socket: String, user: User) {
-    super(socket, user);
+  constructor(socket_id: String, user: User, socket: Socket) {
+    super(socket_id, user, socket, "streaming");
     this.user.addStreamingSocket(this);
     this.stream_set = false;
     this.stream = null;
@@ -37,7 +38,7 @@ export class StreamingSocket extends AbstractSocket {
    * Removes the peer from the StreamingSocket
    */
   removePeer() {
-    this.peer = null;
+    this.peer.close();
     this.peer_set = false;
   }
 
@@ -48,7 +49,7 @@ export class StreamingSocket extends AbstractSocket {
 
   // given an RTCPeerConnection, will add all the tracks of the contained stream
   // if it exists
-  addStreamTracksToPeer(peer: RTCPeerConnection | null) {
+  addStreamTracksToPeer(peer?: RTCPeerConnection) {
     if (!peer) return;
     if (this.stream?.stream) {
       this.stream.stream.getTracks().forEach((track) => {

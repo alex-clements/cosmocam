@@ -31,8 +31,6 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
   };
 
   useEffect(() => {
-    const peer = createPeer();
-    console.log("username: ", username);
     return () => {
       if (peerRef.current) {
         peerRef.current.close();
@@ -65,12 +63,13 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
     });
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
     peer.onicecandidate = (e) => {
-      if (e.candidate)
+      if (e.candidate) {
         socket.emit("ice_broadcast", {
           ice: e.candidate?.toJSON(),
           user: username,
           socket_id: socket.id,
         });
+      }
     };
     return peer;
   };

@@ -1,22 +1,31 @@
 import { User } from "./User.js";
 import { Peer } from "./Peer.js";
+import { Socket } from "socket.io";
 
-export class AbstractSocket {
+export abstract class AbstractSocket {
   user: User;
   id: String;
-  peer: Peer | null;
+  peer: Peer;
   peer_set: Boolean;
+  socket: Socket;
+  type: string;
 
-  constructor(socket: String, user: User) {
+  constructor(socket_id: String, user: User, socket: Socket, type: string) {
     this.user = user;
-    this.id = socket;
-    this.peer = null;
+    this.id = socket_id;
+    this.peer = new Peer();
     this.peer_set = false;
+    this.socket = socket;
+    this.type = type;
   }
 
-  setPeer(peer: Peer) {
-    this.peer = peer;
+  setPeer(peer: RTCPeerConnection) {
+    this.peer?.setPeer(peer);
     this.peer_set = true;
+  }
+
+  getPeer(): Peer {
+    return this.peer;
   }
 
   close() {}

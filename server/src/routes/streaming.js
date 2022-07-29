@@ -14,6 +14,7 @@ router.post("/broadcast", async (req, res) => {
       },
     ],
   });
+  streamManager.addStreamingPeer(user, socket_id, broadcastPeer);
   broadcastPeer.ontrack = (e) =>
     handleTrackEvent(e, broadcastPeer, streamManager, user, socket_id);
   const desc = new webrtc.RTCSessionDescription(req.body.sdp);
@@ -23,7 +24,6 @@ router.post("/broadcast", async (req, res) => {
   const payload = {
     sdp: broadcastPeer.localDescription,
   };
-  req.app.get("streamManager").addStreamingPeer(user, socket_id, broadcastPeer);
   res.json(payload);
 });
 
@@ -39,8 +39,6 @@ router.post("/consumer", async (req, res) => {
       },
     ],
   });
-
-  req.app.set("viewerPeer", peer);
 
   const desc = new webrtc.RTCSessionDescription(req.body.sdp);
   await peer.setRemoteDescription(desc);

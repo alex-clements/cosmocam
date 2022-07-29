@@ -29,7 +29,7 @@ export class Queue {
     this.len++;
   }
 
-  pop(val: any) {
+  pop() {
     if (!this.len) return null;
     let return_node = this.head;
     if (this.head) this.head = this.head.next;

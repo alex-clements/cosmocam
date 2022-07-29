@@ -19,9 +19,13 @@ const darkTheme = createTheme({
 
 interface ApplicationBarProps {
   title: string;
+  backButtonEnabled?: boolean;
 }
 
-const ApplicationBar = ({ title }: ApplicationBarProps) => {
+const ApplicationBar = ({
+  title,
+  backButtonEnabled = true,
+}: ApplicationBarProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -32,14 +36,17 @@ const ApplicationBar = ({ title }: ApplicationBarProps) => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar variant="dense">
-            <Button
-              sx={{ float: "left" }}
-              onClick={handleClick}
-              color="inherit"
-              variant="text"
-            >
-              <ArrowBackIcon />
-            </Button>
+            {backButtonEnabled && (
+              <Button
+                sx={{ float: "left" }}
+                onClick={handleClick}
+                color="inherit"
+                variant="text"
+              >
+                <ArrowBackIcon />
+              </Button>
+            )}
+
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h6" color="inherit" component="div">
                 {title}

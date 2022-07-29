@@ -64,7 +64,12 @@ const Viewer = ({ socket }: ViewerProps) => {
     peer.ontrack = handleTrackEvent;
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
     peer.onicecandidate = (e) => {
-      if (e.candidate) socket.emit("ice_viewer", e.candidate?.toJSON());
+      if (e.candidate)
+        socket.emit("ice_viewer", {
+          ice: e.candidate?.toJSON(),
+          user: username,
+          socket_id: socket.id,
+        });
     };
     return peer;
   }
@@ -75,6 +80,7 @@ const Viewer = ({ socket }: ViewerProps) => {
     const payload = {
       sdp: peer.localDescription,
       user: username,
+      socket_id: socket.id,
     };
     const { data } = await axios.post("/streaming/consumer", payload);
     const desc = new RTCSessionDescription(data.sdp);
@@ -82,9 +88,7 @@ const Viewer = ({ socket }: ViewerProps) => {
   }
 
   function handleTrackEvent(e: any) {
-    console.log("Track Event");
     streamsRef.current.push(e.track);
-    console.log("streams ref = ", streamsRef.current);
     debouncedUpdate();
   }
 
