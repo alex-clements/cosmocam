@@ -1,7 +1,9 @@
 import express from "express";
 const router = express.Router();
 import bcrypt from "bcrypt";
-import data from "../certificates/users.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 var rand = function () {
   return Math.random().toString(36).substr(2);
@@ -12,6 +14,13 @@ var token = function () {
 };
 
 const authenticate = async (req) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  let rawData = fs.readFileSync(
+    path.join(__dirname, "../certificates/users.json")
+  );
+  let data = JSON.parse(rawData);
+
   if (req.body.username.toLowerCase() in data) {
     const username = req.body.username.toLowerCase();
     const passwordHash = data[username]["password"];

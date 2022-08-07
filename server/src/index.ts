@@ -5,6 +5,7 @@ const app = express();
 import bodyParser from "body-parser";
 import tokenManager from "./scripts/tokenManager.js";
 import validateTokenRouter from "./routes/tokenValidation.js";
+import createAccountRouter from "./routes/createAccount.js";
 import authenticateRouter from "./routes/authenticate.js";
 import logoutRouter from "./routes/logout.js";
 import streamingRouter from "./routes/streaming.js";
@@ -52,6 +53,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/streaming", streamingRouter);
 app.use("/authenticate", authenticateRouter);
 app.use("/validateToken", validateTokenRouter);
+app.use("/createAccount", createAccountRouter);
 app.use("/logout", logoutRouter);
 
 // Catch all
