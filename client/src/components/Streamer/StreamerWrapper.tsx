@@ -6,7 +6,9 @@ import ApplicationBar from "../Utility/ApplicationBar";
 import { io, Socket } from "socket.io-client";
 import DefaultEventsMap from "socket.io-client";
 import { useAppSelector } from "../../app/hooks";
-import { selectUsername } from "../TokenManager/tokenSlice";
+import { selectUsername } from "../../redux/tokenSlice";
+import Box from "@mui/material/Box";
+import { motion } from "framer-motion";
 
 interface StreamerProps {
   token: string;
@@ -37,9 +39,12 @@ const StreamerWrapper = ({ token, loaded, loggedIn }: StreamerProps) => {
 
   return (
     <Fragment>
-      <Headerbar loggedIn={loggedIn} />
       <ApplicationBar title={"Stream Video"} />
-      {socket ? <StreamerMain socket={socket} /> : null}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <Box sx={{ paddingTop: 5, flexGrow: 1 }}>
+          {socket ? <StreamerMain socket={socket} /> : null}
+        </Box>
+      </motion.div>
     </Fragment>
   );
 };

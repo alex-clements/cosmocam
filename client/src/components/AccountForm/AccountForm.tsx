@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { setToken, setLoggedIn, setUsername } from "../../redux/tokenSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { motion } from "framer-motion";
-import { Link } from "@mui/material";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -34,9 +33,10 @@ const CssTextField = styled(TextField)({
   },
 });
 
-const LoginForm = () => {
+const AccountForm = () => {
   const [username, setUsernameState] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [visible, setVisible] = useState<boolean>(true);
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ const LoginForm = () => {
     };
 
     const { data } = await axios.post(
-      "/authenticate",
+      "/createAccount",
       {
         username: username,
         password: password,
@@ -100,13 +100,26 @@ const LoginForm = () => {
             style: { color: "white" },
           }}
         />
+        <CssTextField
+          id="outlined-password-input"
+          variant="outlined"
+          label="Confirm Password"
+          type="password"
+          autoComplete="current-password"
+          value={passwordConfirmation}
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
+          onKeyDown={handleKeyDown}
+          sx={{ input: { color: "white" } }}
+          InputLabelProps={{
+            style: { color: "white" },
+          }}
+        />
         <Button onClick={handleSubmit} variant="contained">
-          Login
+          Create Account
         </Button>
-        <Link href="create_account">Create Account</Link>
       </Stack>
     </motion.div>
   );
 };
 
-export default LoginForm;
+export default AccountForm;

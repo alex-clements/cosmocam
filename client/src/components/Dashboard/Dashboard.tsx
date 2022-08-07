@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
@@ -6,37 +6,46 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { connect } from "react-redux";
 import Headerbar from "../Headerbar/Headerbar";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
+  const [visible, setVisible] = useState<boolean>(true);
+
   const navigate = useNavigate();
 
   const goToStream = () => {
-    navigate("/source");
+    setVisible(false);
+    setTimeout(() => navigate("/source"), 200);
   };
 
   const goToReceive = () => {
-    navigate("/recipient");
+    setVisible(false);
+    setTimeout(() => navigate("/recipient"), 200);
   };
 
   return (
-    <Fragment>
+    <motion.div
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      animate={{ opacity: visible ? 1 : 0 }}
+    >
       <Box sx={{ paddingTop: 5, flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item md={4} xs={1}></Grid>
           <Grid item md={4} xs={10}>
             <Stack sx={{ color: "white" }} spacing={2}>
               <Button onClick={goToStream} variant="contained">
-                Stream
+                Stream Video
               </Button>
               <Button onClick={goToReceive} variant="contained">
-                View Streams
+                View Camera Feeds
               </Button>
             </Stack>
           </Grid>
           <Grid item md={4} xs={1}></Grid>
         </Grid>
       </Box>
-    </Fragment>
+    </motion.div>
   );
 };
 

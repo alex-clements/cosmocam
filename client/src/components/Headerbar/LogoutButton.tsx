@@ -4,7 +4,9 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
-import { setLoggedOut } from "../TokenManager/tokenSlice";
+import { setLoggedOut } from "../../redux/tokenSlice";
+import { setApplicationBarMounted } from "../../redux/appSlice";
+import { motion } from "framer-motion";
 
 interface LogoutButtonProps {
   token: string;
@@ -25,13 +27,16 @@ const LogoutButton = ({ token, username, loaded }: LogoutButtonProps) => {
 
     if (data.status == "ok") {
       dispatch(setLoggedOut());
+      dispatch(setApplicationBarMounted(false));
     }
     navigate("/", { replace: true });
   };
   return (
-    <Button onClick={handleClick} color="inherit" variant="text">
-      log out
-    </Button>
+    <motion.div>
+      <Button onClick={handleClick} color="inherit" variant="text">
+        log out
+      </Button>
+    </motion.div>
   );
 };
 

@@ -6,7 +6,9 @@ import ApplicationBar from "../Utility/ApplicationBar";
 import { io, Socket } from "socket.io-client";
 import DefaultEventsMap from "socket.io-client";
 import { useAppSelector } from "../../app/hooks";
-import { selectUsername } from "../TokenManager/tokenSlice";
+import { selectUsername } from "../../redux/tokenSlice";
+import { motion } from "framer-motion";
+import Box from "@mui/material/Box";
 
 interface ViewerWrapperProps {
   token: string;
@@ -37,9 +39,12 @@ const ViewerWrapper = ({ token, loaded, loggedIn }: ViewerWrapperProps) => {
 
   return (
     <Fragment>
-      <Headerbar loggedIn={loggedIn} />
-      <ApplicationBar title={"View Streams"} />
-      {socket ? <Viewer socket={socket} /> : null}
+      <ApplicationBar title={"View Camera Feeds"} />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <Box sx={{ paddingTop: 5, flexGrow: 1 }}>
+          {socket ? <Viewer socket={socket} /> : null}
+        </Box>
+      </motion.div>
     </Fragment>
   );
 };

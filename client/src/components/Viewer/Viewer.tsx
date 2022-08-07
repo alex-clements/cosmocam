@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Stream from "./Stream";
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "../../app/hooks";
-import { selectUsername } from "../TokenManager/tokenSlice";
+import { selectUsername } from "../../redux/tokenSlice";
 
 interface ViewerProps {
   socket: Socket;

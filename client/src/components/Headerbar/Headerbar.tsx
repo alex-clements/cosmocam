@@ -18,8 +18,8 @@ const darkTheme = createTheme({
 });
 
 const styleProps = {
-  width: "45px",
-  height: "45px",
+  width: "35px",
+  height: "35px",
   overflow: "hidden",
   backgroundColor: "#0C5E65",
   borderRadius: "50%",
@@ -27,10 +27,12 @@ const styleProps = {
   border: "solid",
   borderColor: "black",
   borderWidth: "1px",
+  marginTop: "5px",
+  marginBottom: "5px",
 };
 
 const imgProps = {
-  margin: "0px 0px 0px 0px",
+  margin: "-5px 0px 0px -4px",
 };
 
 interface HeaderBarProps {

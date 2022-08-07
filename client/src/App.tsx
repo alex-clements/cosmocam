@@ -13,9 +13,10 @@ import {
   setToken,
   setUsername,
   setLoaded,
-} from "./components/TokenManager/tokenSlice";
+} from "./redux/tokenSlice";
 import { connect } from "react-redux";
 import { useTokenValidation } from "./components/Utility/hooks";
+import AccountFormWrapper from "./components/AccountForm/AccountFormWrapper";
 
 interface AppProps {
   loggedIn: boolean;
@@ -39,12 +40,14 @@ function App({ loggedIn }: AppProps) {
   return (
     <div className="App">
       <BrowserRouter>
+        <Headerbar loggedIn={loggedIn} />
         <Routes>
           <Route path="/" element={<LoginWrapper />} />
+          <Route path="/create_account" element={<AccountFormWrapper />} />
           <Route
             path="/dashboard"
             element={
-              <Protected>
+              <Protected title={"Dashboard"} backButton={false}>
                 <DashboardWrapper />
               </Protected>
             }
@@ -52,7 +55,7 @@ function App({ loggedIn }: AppProps) {
           <Route
             path="/source"
             element={
-              <Protected>
+              <Protected title={"Stream Video"} backButton={true}>
                 <StreamerWrapper />
               </Protected>
             }
@@ -60,7 +63,7 @@ function App({ loggedIn }: AppProps) {
           <Route
             path="/recipient"
             element={
-              <Protected>
+              <Protected title={"View Camera Feeds"} backButton={true}>
                 <ViewerWrapper />
               </Protected>
             }

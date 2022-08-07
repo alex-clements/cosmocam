@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "../../app/hooks";
-import { selectUsername } from "../TokenManager/tokenSlice";
+import { selectUsername } from "../../redux/tokenSlice";
 import { isMobile } from "react-device-detect";
 
 interface StreamerMainProps {
@@ -16,8 +16,8 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const username = useAppSelector(selectUsername);
-  const HEIGHT: number = isMobile ? 100 : 500;
-  const WIDTH: number = isMobile ? 100 : 500;
+  const HEIGHT: number = isMobile ? 300 : 500;
+  const WIDTH: number = isMobile ? 300 : 500;
 
   const stopVideo = () => {
     if (streamRef.current) {
@@ -95,15 +95,6 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
   return (
     <div>
       <div>
-        <video
-          ref={videoRef}
-          autoPlay
-          height={HEIGHT}
-          width={WIDTH}
-          style={{ transform: "scaleX(-1)" }}
-        ></video>
-      </div>
-      <div>
         {!playing ? (
           <Button variant="contained" onClick={startVideo}>
             Start
@@ -113,6 +104,17 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
             Stop
           </Button>
         )}
+      </div>
+      <div>
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          height={HEIGHT}
+          width={WIDTH}
+          style={{ transform: "scaleX(-1)" }}
+        ></video>
       </div>
     </div>
   );

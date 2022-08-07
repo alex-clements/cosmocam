@@ -17,7 +17,6 @@ const DashboardWrapper = ({
 }: DashboardWrapperProps) => {
   return (
     <Fragment>
-      <Headerbar loggedIn={loggedIn} />
       <ApplicationBar backButtonEnabled={false} title={"Dashboard"} />
       <Dashboard />
     </Fragment>
