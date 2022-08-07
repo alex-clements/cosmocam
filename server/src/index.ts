@@ -23,8 +23,8 @@ const __dirname = path.dirname(__filename);
 // Create server
 var httpsServer = https.createServer(
   {
-    key: fs.readFileSync("./src/certificates/key.pem"),
-    cert: fs.readFileSync("./src/certificates/cert.pem"),
+    key: fs.readFileSync(path.join(__dirname, "./certificates/key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "./certificates/cert.pem")),
   },
   app
 );
