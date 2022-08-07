@@ -52,6 +52,8 @@ const Viewer = ({ socket }: ViewerProps) => {
   async function init() {
     const peer = createPeer();
     peerRef = peer;
+    // TODO get number of active streams
+    // add transceiver for each stream
     peer.addTransceiver("video", { direction: "recvonly" });
     peer.addTransceiver("video", { direction: "recvonly" });
     peer.addTransceiver("video", { direction: "recvonly" });

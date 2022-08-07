@@ -18,6 +18,7 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
   const username = useAppSelector(selectUsername);
   const HEIGHT: number = isMobile ? 300 : 500;
   const WIDTH: number = isMobile ? 300 : 500;
+  const [activeViewers, setActiveViewers] = useState(0);
 
   const stopVideo = () => {
     if (streamRef.current) {
@@ -42,8 +43,19 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
         });
         streamRef.current = null;
       }
+
+      socket.on("viewer_connected", handleViewerConnected);
+      socket.on("viewer_disconnected", handleViewerDisconnected);
     };
   }, []);
+
+  const handleViewerConnected = () => {
+    console.log("viewer connected");
+  };
+
+  const handleViewerDisconnected = () => {
+    console.log("viewer disconnecte");
+  };
 
   const init = async (): Promise<void> => {
     const stream = await navigator.mediaDevices.getUserMedia({
