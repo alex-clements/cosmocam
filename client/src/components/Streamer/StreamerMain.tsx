@@ -18,7 +18,7 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
   const username = useAppSelector(selectUsername);
   const HEIGHT: number = isMobile ? 300 : 500;
   const WIDTH: number = isMobile ? 300 : 500;
-  const [activeViewers, setActiveViewers] = useState(0);
+  const viewerCount = useRef(0);
 
   const stopVideo = () => {
     if (streamRef.current) {
@@ -31,7 +31,18 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
     setPlaying(false);
   };
 
+  const getInitialActiveViewers = async () => {
+    const { data } = await axios.post("/streaming/getActiveViewers", {
+      user: username,
+    });
+    viewerCount.current = data.num_viewers;
+  };
+
   useEffect(() => {
+    getInitialActiveViewers();
+    socket.on("viewer_connected", handleViewerConnected);
+    socket.on("viewer_disconnected", handleViewerDisconnected);
+
     return () => {
       if (peerRef.current) {
         peerRef.current.close();
@@ -43,18 +54,26 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
         });
         streamRef.current = null;
       }
-
-      socket.on("viewer_connected", handleViewerConnected);
-      socket.on("viewer_disconnected", handleViewerDisconnected);
     };
   }, []);
 
-  const handleViewerConnected = () => {
+  const handleViewerConnected = (data: { number_viewers: string }) => {
     console.log("viewer connected");
+    console.log("number viewers: ", data.number_viewers);
+    viewerCount.current = viewerCount.current + 1;
+    console.log(viewerCount);
+    if (viewerCount.current == 1) {
+      initPeer();
+    }
   };
 
-  const handleViewerDisconnected = () => {
-    console.log("viewer disconnecte");
+  const handleViewerDisconnected = (data: { number_viewers: string }) => {
+    console.log("viewer disconnected");
+    viewerCount.current = viewerCount.current - 1;
+    if (viewerCount.current == 0) {
+      peerRef.current?.close();
+      console.log("peer connection closed");
+    }
   };
 
   const init = async (): Promise<void> => {
@@ -63,9 +82,18 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
       audio: false,
     });
     streamRef.current = stream;
-    if (videoRef.current) videoRef.current.srcObject = stream;
+    if (videoRef.current && streamRef.current)
+      videoRef.current.srcObject = streamRef.current;
+    if (viewerCount.current >= 1) {
+      initPeer();
+    }
+  };
+
+  const initPeer = async (): Promise<void> => {
     const peer = createPeer();
-    stream.getTracks().forEach((track) => peer.addTrack(track, stream));
+    streamRef.current?.getTracks().forEach((track) => {
+      if (streamRef.current) peer.addTrack(track, streamRef.current);
+    });
     peerRef.current = peer;
   };
 

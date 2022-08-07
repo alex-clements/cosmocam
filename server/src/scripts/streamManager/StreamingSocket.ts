@@ -64,4 +64,10 @@ export class StreamingSocket extends AbstractSocket {
     this.peer?.close();
     this.user.removeStreamingSocket(this.id);
   }
+
+  setPeer(peer: RTCPeerConnection) {
+    this.peer?.setPeer(peer);
+    this.peer_set = true;
+    this.user.updateViewingSockets();
+  }
 }

@@ -192,4 +192,14 @@ export default class StreamManager {
     let socket = user.getStreamingSocket(socket_id);
     socket?.clearStreamAndPeer();
   }
+
+  getNumberViewingSockets(username: String) {
+    let user = this.users.get(username);
+    return user?.viewing_sockets.length;
+  }
+
+  getNumberStreamingSockets(username: String) {
+    let user = this.users.get(username);
+    return user?.streaming_sockets.length;
+  }
 }

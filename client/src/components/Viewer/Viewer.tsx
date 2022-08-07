@@ -54,9 +54,13 @@ const Viewer = ({ socket }: ViewerProps) => {
     peerRef = peer;
     // TODO get number of active streams
     // add transceiver for each stream
-    peer.addTransceiver("video", { direction: "recvonly" });
-    peer.addTransceiver("video", { direction: "recvonly" });
-    peer.addTransceiver("video", { direction: "recvonly" });
+    const { data } = await axios.post("/streaming/getActiveStreamers", {
+      user: username,
+    });
+
+    for (let i = 0; i < data.num_streamers; i++) {
+      peer.addTransceiver("video", { direction: "recvonly" });
+    }
   }
 
   function createPeer() {

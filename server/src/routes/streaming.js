@@ -2,6 +2,30 @@ import express from "express";
 const router = express.Router();
 import webrtc from "@koush/wrtc";
 
+router.post("/getActiveStreamers", (req, res) => {
+  console.log("/getActiveViewers");
+  const streamManager = req.app.get("streamManager");
+  const user = req.body.user.toLowerCase();
+  const numStreamers = streamManager.getNumberStreamingSockets(user);
+  const payload = {
+    num_streamers: numStreamers ? numStreamers : 0,
+  };
+
+  res.json(payload);
+});
+
+router.post("/getActiveViewers", (req, res) => {
+  console.log("/getActiveViewers");
+  const streamManager = req.app.get("streamManager");
+  const user = req.body.user.toLowerCase();
+  const numViewers = streamManager.getNumberViewingSockets(user);
+  const payload = {
+    num_viewers: numViewers ? numViewers : 0,
+  };
+
+  res.json(payload);
+});
+
 router.post("/broadcast", async (req, res) => {
   console.log("/broadcast");
   const streamManager = req.app.get("streamManager");

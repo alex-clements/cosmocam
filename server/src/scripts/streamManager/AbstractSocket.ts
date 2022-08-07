@@ -29,4 +29,19 @@ export abstract class AbstractSocket {
   }
 
   close() {}
+
+  /**
+   * Emits an event from the socket
+   * @param event The event to emit
+   */
+  emit(event: string, message?: Object) {
+    if (this.socket) {
+      console.log(event);
+      if (message) {
+        this.socket.emit(event, message);
+      } else {
+        this.socket.emit(event);
+      }
+    }
+  }
 }

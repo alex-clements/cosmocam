@@ -18,6 +18,12 @@ export class User {
     this.streaming_sockets.push(socket);
   }
 
+  updateViewingSockets(): void {
+    this.viewing_sockets.forEach((viewing_socket) => {
+      viewing_socket.emit("reestablish_connection", "stream added");
+    });
+  }
+
   // removes a streaming socket from the user
   removeStreamingSocket(socket: String): void {
     let to_remove: number = -1;
@@ -56,6 +62,11 @@ export class User {
    */
   addViewingSocket(socket: ViewingSocket): void {
     this.viewing_sockets.push(socket);
+    this.streaming_sockets.forEach((streaming_socket: StreamingSocket) => {
+      streaming_socket.emit("viewer_connected", {
+        number_viewers: this.viewing_sockets.length,
+      });
+    });
   }
 
   /**
@@ -73,6 +84,12 @@ export class User {
     if (to_remove >= 0) {
       this.viewing_sockets.splice(to_remove, 1);
     }
+
+    this.streaming_sockets.forEach((streaming_socket: StreamingSocket) => {
+      streaming_socket.emit("viewer_disconnected", {
+        number_viewers: this.viewing_sockets.length,
+      });
+    });
   }
 
   /**
