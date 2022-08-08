@@ -28,13 +28,16 @@ export class Peer {
         this.peer.addIceCandidate(ice);
         while (this.ice_queue.len > 0) {
           this.peer.addIceCandidate(this.ice_queue.pop());
+          console.log("ice added 1");
         }
       } else {
         this.ice_queue.push(ice);
+        console.log("ice added 2");
       }
     } else {
       while (this.ice_queue.len > 0) {
         this.peer?.addIceCandidate(this.ice_queue.pop());
+        console.log("ice added 3");
       }
     }
   }

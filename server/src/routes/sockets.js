@@ -39,7 +39,6 @@ export default function (server, app) {
 
     socket.on("ice_broadcast", (data) => {
       let streamManager = app.get("streamManager");
-
       streamManager
         .getStreamingPeer(data.user.toLowerCase(), socket.id)
         ?.addIceCandidate(data.ice);

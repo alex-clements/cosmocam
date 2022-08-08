@@ -34,7 +34,22 @@ router.post("/broadcast", async (req, res) => {
   const broadcastPeer = new webrtc.RTCPeerConnection({
     iceServers: [
       {
-        urls: "stun:stun.stunprotocol.org",
+        urls: "stun:openrelay.metered.ca:80",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:80",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelayproject",
+        credential: "openrelayproject",
       },
     ],
   });
@@ -59,7 +74,22 @@ router.post("/consumer", async (req, res) => {
   const peer = new webrtc.RTCPeerConnection({
     iceServers: [
       {
-        urls: "stun:stun.stunprotocol.org",
+        urls: "stun:openrelay.metered.ca:80",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:80",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443",
+        username: "openrelayproject",
+        credential: "openrelayproject",
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelayproject",
+        credential: "openrelayproject",
       },
     ],
   });
