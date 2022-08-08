@@ -1,5 +1,4 @@
 "use strict";
-import { Queue } from "../scripts/Queue.js";
 import { Server } from "socket.io";
 
 export default function (server, app) {

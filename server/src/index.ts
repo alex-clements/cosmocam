@@ -24,7 +24,9 @@ const __dirname = path.dirname(__filename);
 var httpsServer = https.createServer(
   {
     key: fs.readFileSync(path.join(__dirname, "./certificates/key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "./certificates/cert.pem")),
+    cert: fs.readFileSync(
+      path.join(__dirname, "./certificates/certificate.pem")
+    ),
   },
   app
 );
@@ -63,4 +65,4 @@ app.get("*", (req: Request, res: Response) => {
 });
 
 // Start the server
-httpsServer.listen(3001, () => console.log("Server started on port 3001"));
+httpsServer.listen(443, () => console.log("Server started on port 443"));
