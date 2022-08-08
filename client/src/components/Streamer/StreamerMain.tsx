@@ -99,7 +99,26 @@ const StreamerMain = ({ socket }: StreamerMainProps) => {
 
   const createPeer = (): RTCPeerConnection => {
     const peer = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.stunprotocol.org" }],
+      iceServers: [
+        {
+          urls: "stun:openrelay.metered.ca:80",
+        },
+        {
+          urls: "turn:openrelay.metered.ca:80",
+          username: "openrelayproject",
+          credential: "openrelayproject",
+        },
+        {
+          urls: "turn:openrelay.metered.ca:443",
+          username: "openrelayproject",
+          credential: "openrelayproject",
+        },
+        {
+          urls: "turn:openrelay.metered.ca:443?transport=tcp",
+          username: "openrelayproject",
+          credential: "openrelayproject",
+        },
+      ],
     });
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
     peer.onicecandidate = (e) => {
